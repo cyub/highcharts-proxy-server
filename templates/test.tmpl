@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <title>Highcharts-Proxy-Server</title>
+  <script type="text/javascript">
+    var HPS = '{{$hps}}';
+  </script>
+  <style>
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica, "Microsoft YaHei", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", STHeiti;
+  background: #f5f5f5;
+}
+
+label {
+  display: block;
+  padding-bottom: 5px;
+  padding-top: 2em;
+  clear: both;
+}
+
+input {
+  width: 100%;
+  font-size: 20px;
+  outline: none;
+  background: #FFF;
+  border: 1px solid #eee;
+}
+
+.header {
+  background: #252530;
+  height: 60px;
+  position: fixed;
+  z-index: 2000;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  background-image: url('https://img.hcharts.cn/static/highcharts/images/logo.svg');
+  background-position: left center;
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+}
+
+.button {
+  cursor: pointer;
+  margin-top: 10px;
+  margin-left: 10px;
+  float: right;
+  text-align: center;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  background: #90ef7f;
+  color: #333;
+  outline: none;
+  border: 1px solid #90ef7f;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+  font-family: Helvetica, "Microsoft YaHei";
+}
+
+button:hover {
+  color: #fff;
+  background-color: #71db5f;
+}
+
+button:active {
+  background: #E8F5E9;
+  color: #242424;
+}
+
+.info {
+  padding-top: 2px;
+  padding-bottom: 10px;
+  font-size: 0.8em;
+  color: gray;
+}
+
+.codeinput {
+  width: 100%;
+  height: 100px;
+  outline: none;
+  background: #FFF;
+  border: 1px solid #eee;
+}
+
+.box-size {
+  box-sizing: border-box !important;
+  -moz-box-sizing: border-box !important;
+  -webkit-box-sizing: border-box !important;
+}
+
+.page {
+  height: 100%;
+  width: 100%;
+}
+
+.buttons {
+  position: fixed;
+  width: 60%;
+  left: 0px;
+  bottom: 10px;
+}
+
+.panel-container {
+  float: left;
+  padding: 50px;
+  padding-bottom: 100px;
+}
+
+.panel {
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background: #FFF;
+  border: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+.main-panel {
+  width: 60%;
+  height: 100%;
+  padding-right: 25px;
+  padding-left: 25px;
+}
+
+.chart-panel {
+  width: 40%;
+  max-height: 70%;
+  padding-left: 25px;
+}
+
+.chart-frame {
+  position: absolute;
+  right: 0px;
+  top: 60px;
+  height: 100%;
+  width: 25%;
+}
+
+.CodeMirror {
+  background-color: #efefef;
+  font-family: Monaco, "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.CodeMirror pre {
+  line-height: 1.5;
+  padding: 0 8px;
+}
+
+pre {
+  font-family: Monaco, "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 0 8px;
+}
+
+.CodeMirror-gutters {
+  border-right: none;
+}
+
+.CodeMirror-linenumber {
+  color: #ccc;
+}
+
+input, select, textarea {
+  color:#444;
+  font-size:16px;
+  padding: 4px 6px;
+  font-family: Helvetica, "Microsoft YaHei", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", STHeiti;
+}
+
+h1 {
+  margin-top: 0px;
+  display: block;
+  font-size: 1.4em;
+  -webkit-margin-after: 0.67em;
+  -webkit-margin-start: 0px;
+  -webkit-margin-end: 0px;
+  font-weight: bold;
+}</style>
+</head>
+
+<body>
+  <div class="page box-size">
+    <div class="panel-container main-panel box-size">
+      <div class="panel">
+        <h1>Highcharts-Proxy-Server测试</h1>
+  
+        <label>图表类型</label>
+         <div class="info box-size">选填</div>
+        <select id="type" class="box-size">
+          <option value="column">--------</option>
+          <option value="line">折线图</option>
+          <option value="column">直方图</option>
+          <option value="pie">饼图</option>
+          <option value="area">区域图</option>
+        </select>
+
+        <label>x轴标题</label>
+        <div class="info box-size">必填</div>
+        <input class="box-size" id="xtitle" value="月平均降雨量" />
+
+        <label>x轴副标题</label>
+        <div class="info box-size">选填</div>
+        <input class="box-size" id="xsubtitle" value="数据来源: WorldClimate.com"/>
+
+        <label>y轴标题</label>
+        <div class="info box-size">选填</div>
+        <input class="box-size" id="ytitle" value="降雨量 (mm)" />
+
+        <label>图例位置</label>
+        <div class="info box-size">选填。参见Highchart。输入为layout，align，verticalAlign这三项值，且以竖线隔开</div>
+        <input class="box-size" id="legend" value="vertical|right|middle" />
+
+        <label>宽度</label>
+        <div class="info box-size">选填。图片的宽度，默认是800px，最大值不能超过 2000px</div>
+        <input type="number" class="box-size" id="width" value="560" />
+
+        <label>高度</label>
+        <div class="info box-size">选填。图片的高度度，默认是400px</div>
+        <input type="number" class="box-size" id="height" value="420" />
+
+        <label>x轴数据源</label>
+        <div class="info box-size">必填。对应highchart数据源xAxis部分</div>
+        <textarea id="xdata" style="width: 600px;height: 220px;">
+          [
+            '一月',
+            '二月',
+            '三月',
+            '四月',
+            '五月',
+            '六月',
+            '七月',
+            '八月',
+            '九月',
+            '十月',
+            '十一月',
+            '十二月'
+          ]
+        </textarea>
+
+      <label>y轴数据源</label>
+        <div class="info box-size">必填。对应Highchart数据源series部分，仅支持纯数据</div>
+        <textarea id="ydata" style="width: 600px;height: 220px;">
+           [{
+            name: '东京',
+            data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+          }, {
+              name: '纽约',
+              data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+          }, {
+              name: '伦敦',
+              data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+          }, {
+              name: '柏林',
+              data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+          }]
+        </textarea>
+
+        <label>预览类型</label>
+        <div class="info box-size">请选择嵌入页面或者生成图片形式</div>
+        <select id="test-type">
+          <option value="iframe">嵌入页面</option>
+          <option value="image">生成图片</option>
+        </select>
+      </div>
+    </div>
+    <div class="panel-container chart-panel box-size">
+      <div class="panel">
+        <h1>结果预览</h1>
+        <div id="preview-container">
+          <div class="info">请点击【预览按钮】查看</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h1>引用地址</h1>
+        <div id="code-container">
+          <pre style="color:gray">支持两种展现形式，一种iframe嵌套形式, 另外一种图片形式</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button id="preview" class="button">预览</button>
+    </div>
+
+    <div class="header"></div>
+  </div>
+
+</body>
+<script>
+  $('#preview').on('click', function () {
+    var type = $('#type').val();
+    var testType = $('#test-type').val();
+    var xtitle = $('#xtitle').val();
+    var xsubtitle = $('#xsubtitle').val();
+    var ytitle = $('#ytitle').val();
+    var legend = $('#legend').val();
+    var width = $('#width').val() || 800;
+    var height = $('#height').val() || 400;
+    var xdata = $('#xdata').val().trim();
+    var ydata = $('#ydata').val().trim();
+    if (!xtitle || !ytitle || !xdata || !ydata) {
+      alert('数据信息必须填写')
+      return;
+    }
+    try {
+      xdata = eval ('(' + xdata.trim() + ')');
+    ydata = eval('(' + ydata.trim() + ')');
+  } catch(exception) {
+    alert('请检查数据格式');
+    return ;
+  }
+    
+    var urlparts = {
+      type: type,
+      title: [xtitle, xsubtitle, ytitle].join('|'),
+      legend: legend,
+      width: width,
+      height: height,
+      xAxis: JSON.stringify(xdata),
+      series: JSON.stringify(ydata)
+    }
+    if (1) {
+      url = HPS + '/i?' + $.param(urlparts);
+      html = '<iframe src="' + url + '" width="' + width + '" height="' + height+ ' overflow=\"hide\"" frameborder=\"0\">';
+      console.log(url);
+      $('#preview-container').html(html);
+      $('#code-container pre').text(html)
+    }
+  });
+</script>
+</html>

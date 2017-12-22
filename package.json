@@ -1,0 +1,19 @@
+{
+  "name": "highcharts-proxy-server",
+  "version": "1.0.0",
+  "description": "an proxy server for highchart server render",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --legacy-watch server.js --watch ."
+  },
+  "keywords": [
+    "highchart"
+  ],
+  "author": "tink",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "http-proxy": "^1.16.2"
+  }
+}
