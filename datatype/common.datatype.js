@@ -1,15 +1,15 @@
 const config = require('../config');
 
-module.exports = function (urlParts) {
+module.exports = function (params) {
 	let dtStruct = {};
 	let {
-        type = '', 
-        title = '', 
-        xAxis = '', 
-        yAxis = '', 
-        series = '', 
+        type = '',
+        title = '',
+        xAxis = '',
+        yAxis = '',
+        series = '',
         legend = ''
-    } = urlParts.query;
+    } = params;
 
     if (type) { // 图表类型
         dtStruct['chart'] = {
@@ -62,6 +62,7 @@ module.exports = function (urlParts) {
             verticalAlign: 'middle',
             x:0,
             y:0
+
         }
 
         for (i in dtStruct['legend']) {

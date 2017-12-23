@@ -2,12 +2,6 @@ const cluster = require('cluster');
 const http = require('http');
 const os = require('os');
 const config = require('./config');
-const axios = require('axios');
-const httpClient = axios.create({
-  baseURL: config.target,
-  timeout: config.timeout,
-  headers: {'X-Proxy-By': 'highcharts-proxy-server', 'Content-Type':'application/json'}
-});
 const url = require('url');
 
 const dtManager = require('./datatype/manager');
@@ -36,9 +30,18 @@ if (cluster.isMaster) {
 				metrics[flag]++;
 			}
 			return;
-		} else if(msg.cmd == 'metric') {
+		} else if(msg.cmd == 'metric.show') {
 			return worker.send(metrics);
+		} else if (msg.cmd == 'metric.load') {
+			for (i in msg.data) {
+				(typeof(metrics[i]) !== 'undefined')
+				&& (metrics[i] = msg.data[i]);
+			}
+			return;
+		} else if (msg.cmd == 'metric.save') {
+			return dtManager.saveMetricToFile(metrics);
 		}
+
 		console.log(`uncatch worker message ${msg.cmd}`);
 	});
 
@@ -54,23 +57,23 @@ if (cluster.isMaster) {
 		urlParts = url.parse(req.url, true);
 		switch (urlParts.pathname) {
 			case '/i':
-				dtManager.handleIframeEmbed(req, res, httpClient)
+				dtManager.handleIframeEmbed(req, res)
 			break;
 			case '/t':
-				dtManager.handleTest(req, res, httpClient);
+				dtManager.handleTest(req, res);
 			break;
 			case '/m':
-				dtManager.handleMetrics(req, res, httpClient);
+				dtManager.handleMetrics(req, res);
 				break;
 			case '/s':
-				dtManager.handleServerRender(req, res, httpClient);
+				dtManager.handleServerRender(req, res);
 				break;
 			default:
-				res.end('welcome to use highchart!');
-				
+				dtManager.defaultHandle(req, res);
+
 		}
 	}).listen(config.port, config.host, () => {
-		console.log(`start proxy service listen ${config.host}:${config.port}`)
+		console.log(`start proxy service listen ${config.host}:${config.port} at workder[${cluster.worker.id}]`)
 	});
 
 	server.on('error', (err) => {

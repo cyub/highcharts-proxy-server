@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Highchart-Proxy-Server统计</title>
+    <script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+    <script src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
+    <script src="http://cdn.hcharts.cn/highcharts/modules/offline-exporting.js"></script>
+    <style>
+        body{
+            overflow:hidden;
+        }
+        body *{
+        -moz-user-select:none; /*火狐*/
+           -webkit-user-select:none;  /*webkit浏览器*/
+           -ms-user-select:none;   /*IE10*/
+           -khtml-user-select:none; /*早期浏览器*/
+           user-select:none;
+        }
+    </style>
+</head>
+<body>
+    <div id="container" style="max-width:{{$width}}px;height:{{$height}}px"></div>
+    <script type="text/javascript">
+        var chart = Highcharts.chart('container', {{$chart}});
+    </script>
+</body>
+
+</html>
