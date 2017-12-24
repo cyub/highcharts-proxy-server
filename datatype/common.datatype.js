@@ -1,14 +1,15 @@
 const config = require('../config');
 
 module.exports = function (params) {
-	let dtStruct = {};
-	let {
+	let dtStruct = {}, {
+
         type = '',
         title = '',
         xAxis = '',
         yAxis = '',
         series = '',
-        legend = ''
+        legend = '',
+        all = '',
     } = params;
 
     if (type) { // 图表类型
@@ -24,14 +25,14 @@ module.exports = function (params) {
         if (titles[1]) {
             dtStruct['subtitle'] = {
                 text: titles[1]
-            }
+            };
         }
         if (titles[2]) {
             dtStruct['yAxis'] = {
                 title: {
-                    text: yAxis
+                    text: titles[2]
                 }
-            }
+            };
         }
     }
     if (yAxis) { // y轴标题
@@ -39,7 +40,15 @@ module.exports = function (params) {
             title: {
                 text: yAxis
             }
-        }
+        };
+    }
+
+    if (!dtStruct['yAxis']) {
+        dtStruct['yAxis'] = {
+            title: {
+                text: ''
+            }
+        };
     }
 
     dtStruct['series'] = [];
@@ -75,6 +84,9 @@ module.exports = function (params) {
         }
     }
 
+    if (all) {
+        dtStruct = JSON.parse(all);
+    }
     if (config.credits && config.credits.text) { // 版权信息
         dtStruct['credits'] = {
             enabled: true,

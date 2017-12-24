@@ -228,14 +228,14 @@ h1 {
         <input class="box-size" id="legend" value="vertical|right|middle" />
 
         <label>宽度</label>
-        <div class="info box-size">选填。图片的宽度，默认是800px，最大值不能超过 2000px</div>
-        <input type="number" class="box-size" id="width" value="560" />
+        <div class="info box-size">选填。图片的宽度，默认是800px，服务端渲染不支持宽高设置</div>
+        <input type="number" class="box-size" id="width" value="490" />
 
         <label>高度</label>
         <div class="info box-size">选填。图片的高度度，默认是400px</div>
-        <input type="number" class="box-size" id="height" value="420" />
+        <input type="number" class="box-size" id="height" value="360" />
 
-        <label>x轴数据源</label>
+        <label>x轴数据</label>
         <div class="info box-size">必填。对应highchart数据源xAxis部分</div>
         <textarea id="xdata" style="width: 600px;min-height: 200px;" class="highlight">[
     '一月',
@@ -253,7 +253,7 @@ h1 {
 ]
 </textarea>
 
-      <label>y轴数据源</label>
+      <label>y轴数据</label>
         <div class="info box-size">必填。对应Highchart数据源series部分，仅支持纯数据</div>
         <textarea id="ydata" style="width: 600px;min-height: 200px;"  class="highlight">[
       {
@@ -269,6 +269,77 @@ h1 {
           name: '柏林',
           data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
 }]</textarea>
+        <label style="width: 600px; display: inline-block;">自定义数据<input type="checkbox"  value="1" style="width:100px;display: inline;" id="udefine"></label>
+        <div class="info box-size">选填。对应Highchart主配置项，若使用此自定义数据项，则上面除宽高外的数据项失效</div>
+        <textarea id="udata" style="width: 600px;min-height: 200px;"  class="highlight">
+{
+title: {
+    text: '混合图表'
+},
+xAxis: {
+    categories: ['苹果', ' 橙', '梨', '香蕉', '李子']
+},
+yAxis: {
+    title:'消耗数量'
+},
+plotOptions: {
+    series: {
+        stacking: 'normal'
+    }
+},
+labels: {
+    items: [{
+        html: '水果消耗',
+        style: {
+            left: '100px',
+            top: '18px',
+            color: 'black'
+        }
+    }]
+},
+series: [{
+    type: 'column',
+    name: '小张',
+    data: [3, 2, 1, 3, 4]
+}, {
+    type: 'column',
+    name: '小潘',
+    data: [2, 3, 5, 7, 6]
+}, {
+    type: 'column',
+    name: '小王',
+    data: [4, 3, 3, 9, 0]
+}, {
+    type: 'spline',
+    name: '平均值',
+    data: [3, 2.67, 3, 6.33, 3.33],
+    marker: {
+        lineWidth: 2,
+        lineColor: 'pure',
+        fillColor: 'white'
+    }
+}, {
+    type: 'pie',
+    name: '总的消耗',
+    data: [{
+        name: '小张',
+        y: 13
+    }, {
+        name: '小潘',
+        y: 23
+    }, {
+        name: '小王',
+        y: 19
+    }],
+    center: [100, 80],
+    size: 100,
+    showInLegend: false,
+    dataLabels: {
+        enabled: false
+    }
+}]
+}
+        </textarea>
 
         <label>预览类型</label>
         <div class="info box-size">请选择嵌入页面或者生成图片形式</div>
@@ -282,7 +353,7 @@ h1 {
       <div class="panel">
         <h1>结果预览</h1>
         <div id="preview-container">
-          <div class="info">请点击【预览按钮】查看</div>
+          <div class="info">请点击【预览】按钮查看</div>
         </div>
       </div>
 
@@ -315,8 +386,21 @@ h1 {
         lineNumbers: true,
         json: true
       });
+      var uCM = CodeMirror.fromTextArea(document.getElementById('udata'), {
+        mode: 'javascript',
+        lineNumbers: true,
+        json: true
+      });
 
+    $('#udefine').on('change', function () {
+      if ($('#udefine:checked').val() == 1) {
+        $(uCM.getWrapperElement()).show();
+      } else {
+        $(uCM.getWrapperElement()).hide();
+      }
+    }).trigger('change')
     $('#preview').on('click', function () {
+
       var type = $('#type').val();
       var testType = $('#test-type').val();
       var xtitle = $('#xtitle').val();
@@ -327,30 +411,46 @@ h1 {
       var height = $('#height').val() || 400;
       var xdata = xCM.getValue().trim();
       var ydata = yCM.getValue().trim();
-      console.log(xdata)
-      console.log(ydata);
-      if (!xtitle || !ytitle || !xdata || !ydata) {
-        alert('数据信息必须填写')
-        return;
+      var udata = uCM.getValue().trim();
+      var urlparts = {};
+      if (udata && $('#udefine:checked').val() == 1) {
+        try {
+         udata = eval('(' + udata + ')');
+        } catch(exception) {
+          alert('请检查自定义数据');
+          return;
+        }
+
+        urlparts = {
+          all : JSON.stringify(udata),
+          width: width,
+          height: height,
+        }
+      } else {
+        if (!xtitle || !xdata || !ydata) {
+          alert('数据信息必须填写')
+          return;
+        }
+
+        try {
+          xdata = eval ('(' + xdata.trim() + ')');
+          ydata = eval('(' + ydata.trim() + ')');
+        } catch(exception) {
+          alert('请检查数据格式');
+          return ;
+        }
+
+        urlparts = {
+          type: type,
+          title: [xtitle, xsubtitle, ytitle].join('|'),
+          legend: legend,
+          width: width,
+          height: height,
+          xAxis: JSON.stringify(xdata),
+          series: JSON.stringify(ydata)
+        }
       }
 
-      try {
-        xdata = eval ('(' + xdata.trim() + ')');
-        ydata = eval('(' + ydata.trim() + ')');
-      } catch(exception) {
-        alert('请检查数据格式');
-        return ;
-      }
-
-      var urlparts = {
-        type: type,
-        title: [xtitle, xsubtitle, ytitle].join('|'),
-        legend: legend,
-        width: width,
-        height: height,
-        xAxis: JSON.stringify(xdata),
-        series: JSON.stringify(ydata)
-      }
       if (testType == 'iframe') {
         url = HPS + '/i?' + $.param(urlparts);
         html = '<iframe src="' + url + '" width="' + width + '" height="' + height+ ' overflow=\"hide\"" frameborder=\"0\">';
@@ -362,13 +462,6 @@ h1 {
       $('#preview-container').html(html);
       $('#code-container pre').text(html);
     });
-    // $.each($('textarea.highlight'), function (i, n) {
-    //   CodeMirror.fromTextArea(n, {
-    //     mode: 'javascript',
-    //     lineNumbers: true,
-    //     json: true
-    //   });
-    // });
   });
 
 </script>
