@@ -103,7 +103,7 @@ module.exports = (() => {
 	this.view = function (res, template, viewData) {
 		fs.readFile(`${__dirname}/../templates/${template}.tmpl`, 'utf8', (err, tmpl) => {
 			if (err) throw err;
-			tmpl = tmpl.replace(/{{\s?(\$[\w]+)\s?}}/gi, (match, tuple)=>{
+			tmpl = tmpl.replace(/{{\s*(\$[\w]+)\s*}}/gi, (match, tuple)=>{
 				if (viewData && viewData[tuple.slice(1)]) {
 					let val = viewData[tuple.slice(1)];
 
@@ -137,7 +137,6 @@ module.exports = (() => {
 	}
 
 	this.saveMetricToFile = function (metrics) {
-		fs.writeFileSync(config.metric_save_file, JSON.stringify(metrics));
 		setTimeout(() => {
 			fs.writeFileSync(config.metric_save_file, JSON.stringify(metrics));
 		}, config.metric_delay);

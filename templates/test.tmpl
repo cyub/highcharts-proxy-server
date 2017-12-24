@@ -9,191 +9,191 @@
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
   <link href="https://cdn.bootcss.com/codemirror/5.32.0/codemirror.min.css" rel="stylesheet">
   <script src="https://cdn.bootcss.com/codemirror/5.32.0/codemirror.min.js"></script>
-
   <script type="text/javascript">
     var HPS = '{{$hps}}';
   </script>
   <style>
-html,
-body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: Helvetica, "Microsoft YaHei", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", STHeiti;
-  background: #f5f5f5;
-}
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Helvetica, "Microsoft YaHei", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", STHeiti;
+    background: #f5f5f5;
+  }
 
-label {
-  display: block;
-  padding-bottom: 5px;
-  padding-top: 2em;
-  clear: both;
-}
+  label {
+    display: block;
+    padding-bottom: 5px;
+    padding-top: 2em;
+    clear: both;
+  }
 
-input {
-  width: 100%;
-  font-size: 20px;
-  outline: none;
-  background: #FFF;
-  border: 1px solid #eee;
-}
+  input {
+    width: 100%;
+    font-size: 20px;
+    outline: none;
+    background: #FFF;
+    border: 1px solid #eee;
+  }
 
-.header {
-  background: #252530;
-  height: 60px;
-  position: fixed;
-  z-index: 2000;
-  width: 100%;
-  top: 0px;
-  left: 0px;
-  background-image: url('https://img.hcharts.cn/static/highcharts/images/logo.svg');
-  background-position: left center;
-  background-size: auto 100%;
-  background-repeat: no-repeat;
-}
+  .header {
+    background: #252530;
+    height: 60px;
+    position: fixed;
+    z-index: 2000;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    background-image: url('https://img.hcharts.cn/static/highcharts/images/logo.svg');
+    background-position: left center;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+  }
 
-.button {
-  cursor: pointer;
-  margin-top: 10px;
-  margin-left: 10px;
-  float: right;
-  text-align: center;
-  padding: 8px 20px;
-  font-size: 14px;
-  font-weight: bold;
-  background: #90ef7f;
-  color: #333;
-  outline: none;
-  border: 1px solid #90ef7f;
-  transition: 0.2s ease all;
-  -moz-transition: 0.2s ease all;
-  -webkit-transition: 0.2s ease all;
-  font-family: Helvetica, "Microsoft YaHei";
-}
+  .button {
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 10px;
+    float: right;
+    text-align: center;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    background: #90ef7f;
+    color: #333;
+    outline: none;
+    border: 1px solid #90ef7f;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+    font-family: Helvetica, "Microsoft YaHei";
+  }
 
-button:hover {
-  color: #fff;
-  background-color: #71db5f;
-}
+  button:hover {
+    color: #fff;
+    background-color: #71db5f;
+  }
 
-button:active {
-  background: #E8F5E9;
-  color: #242424;
-}
+  button:active {
+    background: #E8F5E9;
+    color: #242424;
+  }
 
-.info {
-  padding-top: 2px;
-  padding-bottom: 10px;
-  font-size: 0.8em;
-  color: gray;
-}
+  .info {
+    padding-top: 2px;
+    padding-bottom: 10px;
+    font-size: 0.8em;
+    color: gray;
+  }
 
-.codeinput {
-  width: 100%;
-  height: 100px;
-  outline: none;
-  background: #FFF;
-  border: 1px solid #eee;
-}
+  .codeinput {
+    width: 100%;
+    height: 100px;
+    outline: none;
+    background: #FFF;
+    border: 1px solid #eee;
+  }
 
-.box-size {
-  box-sizing: border-box !important;
-  -moz-box-sizing: border-box !important;
-  -webkit-box-sizing: border-box !important;
-}
+  .box-size {
+    box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    -webkit-box-sizing: border-box !important;
+  }
 
-.page {
-  height: 100%;
-  width: 100%;
-}
+  .page {
+    height: 100%;
+    width: 100%;
+  }
 
-.buttons {
-  position: fixed;
-  width: 60%;
-  left: 0px;
-  bottom: 10px;
-}
+  .buttons {
+    position: fixed;
+    width: 60%;
+    left: 0px;
+    bottom: 10px;
+  }
 
-.panel-container {
-  float: left;
-  padding: 50px;
-  padding-bottom: 100px;
-}
+  .panel-container {
+    float: left;
+    padding: 50px;
+    padding-bottom: 100px;
+  }
 
-.panel {
-  overflow-y: auto;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  background: #FFF;
-  border: 1px solid #eee;
-  margin-bottom: 20px;
-}
+  .panel {
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    background: #FFF;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+  }
 
-.main-panel {
-  width: 60%;
-  height: 100%;
-  padding-right: 25px;
-  padding-left: 25px;
-}
+  .main-panel {
+    width: 60%;
+    height: 100%;
+    padding-right: 25px;
+    padding-left: 25px;
+  }
 
-.chart-panel {
-  width: 40%;
-  max-height: 70%;
-  padding-left: 25px;
-}
+  .chart-panel {
+    width: 40%;
+    max-height: 70%;
+    padding-left: 25px;
+  }
 
-.chart-frame {
-  position: absolute;
-  right: 0px;
-  top: 60px;
-  height: 100%;
-  width: 25%;
-}
+  .chart-frame {
+    position: absolute;
+    right: 0px;
+    top: 60px;
+    height: 100%;
+    width: 25%;
+  }
 
-.CodeMirror {
-  background-color: #efefef;
-  font-family: Monaco, "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
-  font-size: 12px;
-}
+  .CodeMirror {
+    background-color: #efefef;
+    font-family: Monaco, "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+    font-size: 12px;
+  }
 
-.CodeMirror pre {
-  line-height: 1.5;
-  padding: 0 8px;
-}
+  .CodeMirror pre {
+    line-height: 1.5;
+    padding: 0 8px;
+  }
 
-pre {
-  font-family: Monaco, "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.5;
-  padding: 0 8px;
-}
+  pre {
+    font-family: Monaco, "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 0 8px;
+  }
 
-.CodeMirror-gutters {
-  border-right: none;
-}
+  .CodeMirror-gutters {
+    border-right: none;
+  }
 
-.CodeMirror-linenumber {
-  color: #ccc;
-}
+  .CodeMirror-linenumber {
+    color: #ccc;
+  }
 
-input, select, textarea {
-  color:#444;
-  font-size:16px;
-  padding: 4px 6px;
-  font-family: Helvetica, "Microsoft YaHei", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", STHeiti;
-}
+  input, select, textarea {
+    color:#444;
+    font-size:16px;
+    padding: 4px 6px;
+    font-family: Helvetica, "Microsoft YaHei", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", STHeiti;
+  }
 
-h1 {
-  margin-top: 0px;
-  display: block;
-  font-size: 1.4em;
-  -webkit-margin-after: 0.67em;
-  -webkit-margin-start: 0px;
-  -webkit-margin-end: 0px;
-  font-weight: bold;
-}</style>
+  h1 {
+    margin-top: 0px;
+    display: block;
+    font-size: 1.4em;
+    -webkit-margin-after: 0.67em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-weight: bold;
+  }
+</style>
 </head>
 
 <body>
@@ -203,7 +203,7 @@ h1 {
         <h1>Highcharts-Proxy-Server测试</h1>
 
         <label>图表类型</label>
-         <div class="info box-size">选填</div>
+        <div class="info box-size">选填</div>
         <select id="type" class="box-size">
           <option value="line">折线图</option>
           <option value="column">直方图</option>
@@ -398,9 +398,9 @@ series: [{
       } else {
         $(uCM.getWrapperElement()).hide();
       }
-    }).trigger('change')
-    $('#preview').on('click', function () {
+    }).trigger('change');
 
+    $('#preview').on('click', function () {
       var type = $('#type').val();
       var testType = $('#test-type').val();
       var xtitle = $('#xtitle').val();
@@ -459,6 +459,7 @@ series: [{
         html = '<img src="' + url  + '">';
       }
       console.log(url);
+
       $('#preview-container').html(html);
       $('#code-container pre').text(html);
     });
