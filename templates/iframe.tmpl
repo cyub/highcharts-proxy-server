@@ -22,7 +22,39 @@
 <body>
 	<div id="container" style="max-width:{{$width}}px;height:{{$height}}px"></div>
 	<script type="text/javascript">
-		var chart = Highcharts.chart('container', {{$chart}});
+		var toolkit = {};
+		(function (toolkit) {
+		    toolkit.addslashes = function (str) {
+		        return str.replace(/\\/g, '\\\\').
+		            replace(/\u0008/g, '\\b').
+		            replace(/\t/g, '\\t').
+		            replace(/\n/g, '\\n').
+		            replace(/\f/g, '\\f').
+		            replace(/\r/g, '\\r').
+		            replace(/'/g, '\\\'').
+		            replace(/"/g, '\\"');
+		    };
+
+		    toolkit.parse = function(str) {
+		      return JSON.parse(str, function (k, v) {
+		        if (typeof v != 'string') return v;
+
+		        return (v.substring(0, 6) == '__fn__') ?
+		        eval('(' + v.replace(/^__fn__/, 'function') + ')') : v;
+
+		      });
+		    };
+
+		    toolkit.stringify = function(obj) {
+		        return JSON.stringify(obj, function (k, v) {
+
+		          return (typeof v === 'function') ?
+		          v.toString().replace(/^function/, '__fn__') : v;
+
+		        });
+		    };})(toolkit);
+
+		var chart = Highcharts.chart('container', toolkit.parse('{{$chart}}'));
 	</script>
 </body>
 

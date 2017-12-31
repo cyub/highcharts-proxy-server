@@ -73,7 +73,7 @@ if (cluster.isMaster) {
 
 		}
 	}).listen(config.port, config.host, () => {
-		console.log(`start proxy service listen ${config.host}:${config.port} at workder[${cluster.worker.id}]`)
+		console.log(`start proxy service listen ${config.host}:${config.port} at worker[${cluster.worker.id}]`)
 	});
 
 	server.on('error', (err) => {
