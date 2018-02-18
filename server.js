@@ -29,20 +29,18 @@ if (cluster.isMaster) {
 				metrics['total']++
 				metrics[flag]++;
 			}
-			return;
 		} else if(msg.cmd == 'metric.show') {
-			return worker.send(metrics);
+			worker.send(metrics);
 		} else if (msg.cmd == 'metric.load') {
 			for (i in msg.data) {
 				(typeof(metrics[i]) !== 'undefined')
 				&& (metrics[i] = msg.data[i]);
 			}
-			return;
 		} else if (msg.cmd == 'metric.save') {
 			return dtManager.saveMetricToFile(metrics);
+		} else {
+			console.log(`uncatch worker message ${msg.cmd}`);
 		}
-
-		console.log(`uncatch worker message ${msg.cmd}`);
 	});
 
 	cluster.on('exit', (worker, code, signal) => {

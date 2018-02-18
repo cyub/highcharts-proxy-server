@@ -9,6 +9,7 @@ module.exports = function (params) {
         yAxis = '',
         series = '',
         legend = '',
+        credit = '',
         all = '',
     } = params;
 
@@ -98,7 +99,16 @@ module.exports = function (params) {
             console.log('parse data[all] argument error', e.stack);
         }
     }
-    if (config.credits && config.credits.text) { // 版权信息
+
+    // 版权信息
+    if (credit) {
+        let credits = credit.split('|')
+        dtStruct['credits'] = {
+            enabled: true,
+            text: credits[0],
+            href: credits[1] || ''
+        }
+    } else if (config.credits && config.credits.text) {
         dtStruct['credits'] = {
             enabled: true,
             text: config.credits.text,

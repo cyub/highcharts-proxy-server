@@ -6,14 +6,15 @@ const axios = require('axios');
 const httpClient = axios.create({
   baseURL: config.target,
   timeout: config.timeout,
-  headers: {'X-Proxy-By': 'highcharts-proxy-server', 'Content-Type':'application/json'}
+  headers: {
+  	'X-Proxy-By': 'highcharts-proxy-server',
+  	'Content-Type':'application/json'
+  }
 });
 const toolkit = require('./toolkit');
 
 
-
-module.exports = (() => {
-
+module.exports = (function () {
 	this.dtHandles = [];
 
 	this.handleServerRender = function (req, res) {
