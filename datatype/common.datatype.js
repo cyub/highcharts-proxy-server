@@ -1,14 +1,15 @@
+const toolkit = require('./toolkit');
 const config = require('../config');
 
 module.exports = function (params) {
 	let dtStruct = {}, {
-
         type = '',
         title = '',
         xAxis = '',
         yAxis = '',
         series = '',
         legend = '',
+        credit = '',
         all = '',
     } = params;
 
@@ -53,14 +54,22 @@ module.exports = function (params) {
 
     dtStruct['series'] = [];
     if (series) { // 数据源
-        dtStruct['series'] = JSON.parse(series);
+        try {
+            dtStruct['series'] = JSON.parse(series);
+        } catch (e) {
+            console.log('parse data[series] argument error', e.stack);
+        }
     }
 
     dtStruct['xAxis'] = {
         'categories': []
     }
     if (xAxis) { // x轴
-        dtStruct['xAxis']['categories'] = JSON.parse(xAxis);
+        try {
+            dtStruct['xAxis']['categories'] = JSON.parse(xAxis);
+        } catch(e) {
+            console.log('parse data[xAxis] argument error', e.stack);
+        }
     }
 
     if (legend) { // 图例
@@ -71,7 +80,6 @@ module.exports = function (params) {
             verticalAlign: 'middle',
             x:0,
             y:0
-
         }
 
         for (i in dtStruct['legend']) {
@@ -85,9 +93,22 @@ module.exports = function (params) {
     }
 
     if (all) {
-        dtStruct = JSON.parse(all);
+        try {
+            dtStruct = toolkit.parse(all);
+        } catch(e) {
+            console.log('parse data[all] argument error', e.stack);
+        }
     }
-    if (config.credits && config.credits.text) { // 版权信息
+
+    // 版权信息
+    if (credit) {
+        let credits = credit.split('|')
+        dtStruct['credits'] = {
+            enabled: true,
+            text: credits[0],
+            href: credits[1] || ''
+        }
+    } else if (config.credits && config.credits.text) {
         dtStruct['credits'] = {
             enabled: true,
             text: config.credits.text,

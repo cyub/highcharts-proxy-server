@@ -6,13 +6,15 @@ const axios = require('axios');
 const httpClient = axios.create({
   baseURL: config.target,
   timeout: config.timeout,
-  headers: {'X-Proxy-By': 'highcharts-proxy-server', 'Content-Type':'application/json'}
+  headers: {
+  	'X-Proxy-By': 'highcharts-proxy-server',
+  	'Content-Type':'application/json'
+  }
 });
+const toolkit = require('./toolkit');
 
 
-
-module.exports = (() => {
-
+module.exports = (function () {
 	this.dtHandles = [];
 
 	this.handleServerRender = function (req, res) {
@@ -29,6 +31,11 @@ module.exports = (() => {
 			}
 		} else {
 			body['infile'] = require(__dirname + '/' + 'common.datatype.js')(urlParts.query)
+		}
+
+		if (typeof urlParts.query.debug != 'undefined') {
+			res.setHeader('Content-Type', 'application/json;charset=utf-8');
+			res.end(JSON.stringify(body['infile']));
 		}
 
 		let options = {};
@@ -53,6 +60,7 @@ module.exports = (() => {
 		};
 
 		let { width = 800, height = 400 } = urlParts.query;
+		viewData.chart = toolkit.addslashes(toolkit.stringify(viewData.chart));
 		viewData.width = width;
 		viewData.height = height;
 
@@ -112,7 +120,7 @@ module.exports = (() => {
 					} else if (typeof(val) == 'boolean') {
 						return val == true ? 'true' : 'false';
 					}
-					return JSON.stringify(viewData[tuple.slice(1)])
+					return JSON.stringify(viewData[tuple.slice(1)]);
 				} else {
 					return '';
 				}

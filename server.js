@@ -29,20 +29,18 @@ if (cluster.isMaster) {
 				metrics['total']++
 				metrics[flag]++;
 			}
-			return;
 		} else if(msg.cmd == 'metric.show') {
-			return worker.send(metrics);
+			worker.send(metrics);
 		} else if (msg.cmd == 'metric.load') {
 			for (i in msg.data) {
 				(typeof(metrics[i]) !== 'undefined')
 				&& (metrics[i] = msg.data[i]);
 			}
-			return;
 		} else if (msg.cmd == 'metric.save') {
 			return dtManager.saveMetricToFile(metrics);
+		} else {
+			console.log(`uncatch worker message ${msg.cmd}`);
 		}
-
-		console.log(`uncatch worker message ${msg.cmd}`);
 	});
 
 	cluster.on('exit', (worker, code, signal) => {
@@ -73,7 +71,7 @@ if (cluster.isMaster) {
 
 		}
 	}).listen(config.port, config.host, () => {
-		console.log(`start proxy service listen ${config.host}:${config.port} at workder[${cluster.worker.id}]`)
+		console.log(`start proxy service listen ${config.host}:${config.port} at worker[${cluster.worker.id}]`)
 	});
 
 	server.on('error', (err) => {

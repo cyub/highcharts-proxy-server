@@ -9,6 +9,7 @@
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
   <link href="https://cdn.bootcss.com/codemirror/5.32.0/codemirror.min.css" rel="stylesheet">
   <script src="https://cdn.bootcss.com/codemirror/5.32.0/codemirror.min.js"></script>
+  <script src="https://cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
   <script type="text/javascript">
     var HPS = '{{$hps}}';
   </script>
@@ -128,6 +129,7 @@
     background: #FFF;
     border: 1px solid #eee;
     margin-bottom: 20px;
+    position: relative;
   }
 
   .main-panel {
@@ -193,6 +195,41 @@
     -webkit-margin-end: 0px;
     font-weight: bold;
   }
+  #toclipboard {
+    font-size:12px;
+    font-weight: normal;
+    margin-left: 8px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .speech-bubble {
+    position: relative;
+    background: #8ac626;
+    border-radius: .2em;
+  }
+
+  .speech-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-top-color: #8ac626;
+    border-bottom: 0;
+    margin-left: -6px;
+    margin-bottom: -6px;
+  }
+  .tooltip {
+    position: absolute;
+    left: 114px;
+    top: 1px;
+    padding: 3px 4px;
+    color: white;
+    font-size:12px;
+    display: none;
+  }
 </style>
 </head>
 
@@ -235,6 +272,9 @@
         <div class="info box-size">选填。图片的高度度，默认是400px</div>
         <input type="number" class="box-size" id="height" value="360" />
 
+        <label>版权信息</label>
+        <div class="info box-size">选填。</div>
+        <input type="credit" class="box-size" id="credit" value="@tinker" />
         <label>x轴数据</label>
         <div class="info box-size">必填。对应highchart数据源xAxis部分</div>
         <textarea id="xdata" style="width: 600px;min-height: 200px;" class="highlight">[
@@ -269,8 +309,9 @@
           name: '柏林',
           data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
 }]</textarea>
+
         <label style="width: 600px; display: inline-block;">自定义数据<input type="checkbox"  value="1" style="width:100px;display: inline;" id="udefine"></label>
-        <div class="info box-size">选填。对应Highchart主配置项，若使用此自定义数据项，则上面除宽高外的数据项失效</div>
+        <div class="info box-size">选填。对应Highchart主配置项，若使用此自定义数据项，则上面数据项失效</div>
         <textarea id="udata" style="width: 600px;min-height: 200px;"  class="highlight">
 {
 title: {
@@ -358,7 +399,8 @@ series: [{
       </div>
 
       <div class="panel">
-        <h1>引用地址</h1>
+        <h1>引用地址<span id="toclipboard">点我复制</span></h1>
+        <div class="tooltip speech-bubble">复制成功</div>
         <div id="code-container">
           <pre style="color:gray">支持两种展现形式，一种iframe嵌套形式, 另外一种图片形式</pre>
         </div>
@@ -374,6 +416,18 @@ series: [{
 
 </body>
 <script>
+  // JSON handle OBJECT with function property
+  JSON.parse2 = function(str) {
+      return this.parse(str, function (k, v) {
+        if (typeof v != 'string') return v;
+       return (v.substring(0, 6) == '__fn__') ? eval('(' + v.replace(/^__fn__/, 'function') + ')') : v;
+      });
+  };
+  JSON.stringify2 = function(obj) {
+    return this.stringify(obj, function (k, v) {
+      return (typeof v === 'function') ? v.toString().replace(/^function/, '__fn__') : v;
+    });
+  };
   $(function() {
     var xCM = CodeMirror.fromTextArea(document.getElementById('xdata'), {
         mode: 'javascript',
@@ -400,6 +454,18 @@ series: [{
       }
     }).trigger('change');
 
+    new Clipboard('#toclipboard', {
+      target: function(trigger) {
+        return $('#code-container pre')[0];
+      }
+    }).on('success', function(e) {
+      e.clearSelection();
+      $('.tooltip').show();
+      setTimeout(function () {
+        $('.tooltip').hide();
+      }, 1500);
+    })
+
     $('#preview').on('click', function () {
       var type = $('#type').val();
       var testType = $('#test-type').val();
@@ -409,6 +475,7 @@ series: [{
       var legend = $('#legend').val();
       var width = $('#width').val() || 800;
       var height = $('#height').val() || 400;
+      var credit = $('#credit').val();
       var xdata = xCM.getValue().trim();
       var ydata = yCM.getValue().trim();
       var udata = uCM.getValue().trim();
@@ -420,9 +487,8 @@ series: [{
           alert('请检查自定义数据');
           return;
         }
-
         urlparts = {
-          all : JSON.stringify(udata),
+          all : JSON.stringify2(udata),
           width: width,
           height: height,
         }
@@ -446,14 +512,15 @@ series: [{
           legend: legend,
           width: width,
           height: height,
-          xAxis: JSON.stringify(xdata),
-          series: JSON.stringify(ydata)
+          credit: credit,
+          xAxis: JSON.stringify2(xdata),
+          series: JSON.stringify2(ydata)
         }
       }
 
       if (testType == 'iframe') {
         url = HPS + '/i?' + $.param(urlparts);
-        html = '<iframe src="' + url + '" width="' + width + '" height="' + height+ ' overflow=\"hide\"" frameborder=\"0\">';
+        html = '<iframe src="' + url + '" width="' + width + '" height="' + (height*1 + 10) + '" overflow=\"hide\" frameborder=\"0\">';
       } else {
         url = HPS + '/s?' + $.param(urlparts);
         html = '<img src="' + url  + '">';
